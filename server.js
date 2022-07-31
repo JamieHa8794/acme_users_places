@@ -13,6 +13,9 @@ const createUser = async({ name }) =>{
     return (await client.query('INSERT INTO "user"(name) VALUES($1) RETURNING *;', [name])).rows[0];
 }
 
+const deleteUser = async (id) =>{
+    await client.query('DELETE FROM "user" WHERE id=$1', [id])
+}
 const syncAndSeed = async ()=>{
     const SQL = `
         DROP TABLE IF EXISTS "user";
@@ -42,6 +45,8 @@ const init = async () =>{
         console.log(curly)
         console.log(await getUsers());
         console.log(await getPlaces());
+        await deleteUser(curly.id)
+        console.log(await getUsers());
     }
     catch(err){
         console.log(err)
