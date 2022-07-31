@@ -4,6 +4,8 @@ const app = express();
 const path = require('path')
 
 app.use('/public', express.static(path.join(__dirname,'public')))
+app.use(express.urlencoded({extended: false}))
+
 
 const nav = ({users, places}) =>{
     return(`
@@ -59,14 +61,15 @@ app.get('/users', async(req, res, next)=>{
             <html>
             ${head({title: 'Users'})}
             <body>
-                <nav>
-                    <a href='/'>Home</a>
-                    <a href='/Users'>Users (${users.length})</a>
-                    <a href='/Places'>Places (${places.length})</a>
-                </nav>
+                ${nav({users, places})}
+
                 <h1>
-                Acme Users
+                    Acme Users
                 </h1>
+                <form method='POST'>
+                    <input name='name'/>
+                    <button>Add User</button>
+                </form>
                 <ul>
                 ${users.map(user =>{
                     return(`
@@ -84,9 +87,21 @@ app.get('/users', async(req, res, next)=>{
 
     }
     catch(err){
-        console.log(err)
+       next(err)
     }
 })
+
+app.post('/users', async (req, res, next)=>{
+    const user = req.body;
+    try{
+        await createUser(user)
+        res.redirect('/users')
+    }
+    catch(err){
+        next(err)
+    }
+})
+
 
 app.get('/places', async(req, res, next)=>{
     try{
@@ -119,7 +134,7 @@ app.get('/places', async(req, res, next)=>{
 
     }
     catch(err){
-        console.log(err)
+        next(err)
     }
 })
 const init = async () =>{
@@ -127,13 +142,8 @@ const init = async () =>{
         await client.connect();
         await syncAndSeed();
         const curly = await createUser({name: 'curly'})
-        console.log(curly)
-
-
-        console.log(await getUsers());
-        console.log(await getPlaces());
         await deleteUser(curly.id)
-        console.log(await getUsers());
+
 
         const port = process.env.PORT || 3000;
         app.listen(port, ()=> console.log(`listening on port ${port}`))
