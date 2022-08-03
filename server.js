@@ -77,8 +77,8 @@ app.get('/users', async(req, res, next)=>{
                             ${user.name}
                         </li>
                         <form method='POST' action='/users/${user.id}?_method=DELETE'>
-                        </form>
                         <button>x</button>
+                        </form>
                     `)
                 }).join('')}
                 </ul>
@@ -105,7 +105,15 @@ app.post('/users', async (req, res, next)=>{
     }
 })
 
-app.delete('/delete/:id', async())
+app.delete('/users/:id', async(req, res, next)=>{
+    try{
+        await deleteUser(req.params.id)
+        res.redirect('/users')
+    }
+    catch(err){
+        next(err)
+    }
+})
 
 app.get('/places', async(req, res, next)=>{
     try{
