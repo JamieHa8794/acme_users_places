@@ -31,10 +31,10 @@ app.get('/', async(req, res, next)=>{
                     return(`
                         <li>
                             ${user.name}
+                            <form method='POST' action='/users/${user.id}?_method=DELETE'>
+                            <button>x</button>
+                            </form>
                         </li>
-                        <form method='POST' action='/users/${user.id}?_method=DELETE'>
-                        <button>x</button>
-                        </form>
                     `)
                 }).join('')}
                 </ul>

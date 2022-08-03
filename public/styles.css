@@ -1,8 +1,25 @@
-body{
+body {
     font-family: fantasy;
     background-color: grey;
 }
 nav {
     display: flex;
     justify-content:space-around;
+    border-style: dashed;
+    padding: 10px;
+    background-color: darkgrey;
+
+}
+
+li {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+button{
+    margin-left: 10px;
+}
+
+a{
+    color:black
 }
