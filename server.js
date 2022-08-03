@@ -51,104 +51,10 @@ app.get('/', async (req, res, next)=>{
     }
 })
 
-app.get('/users', async(req, res, next)=>{
-    try{
-        const [users, places] = await Promise.all([
-            getUsers(),
-            getPlaces(),
-        ])
-        const HTML = `
-            <html>
-            ${head({title: 'Users'})}
-            <body>
-                ${nav({users, places})}
+app.use('/users', require('./routes/users'))
 
-                <h1>
-                    Acme Users
-                </h1>
-                <form method='POST'>
-                    <input name='name'/>
-                    <button>Add User</button>
-                </form>
-                <ul>
-                ${users.map(user =>{
-                    return(`
-                        <li>
-                            ${user.name}
-                        </li>
-                        <form method='POST' action='/users/${user.id}?_method=DELETE'>
-                        <button>x</button>
-                        </form>
-                    `)
-                }).join('')}
-                </ul>
-            </body>
-            </html>
-        `
-        res.send(HTML)
+app.use('/places', require('./routes/places'))
 
-
-    }
-    catch(err){
-       next(err)
-    }
-})
-
-app.post('/users', async (req, res, next)=>{
-    const user = req.body;
-    try{
-        await createUser(user)
-        res.redirect('/users')
-    }
-    catch(err){
-        next(err)
-    }
-})
-
-app.delete('/users/:id', async(req, res, next)=>{
-    try{
-        await deleteUser(req.params.id)
-        res.redirect('/users')
-    }
-    catch(err){
-        next(err)
-    }
-})
-
-app.get('/places', async(req, res, next)=>{
-    try{
-        const [users, places] = await Promise.all([
-            getUsers(),
-            getPlaces(),
-        ])
-        const HTML = `
-            <html>
-            ${head({title: 'Places'})}
-            <body>
-                ${nav({users, places})}
-                <h1>
-                Acme Places
-                </h1>
-                <ul>
-                ${places.map(place =>{
-                    return(`
-                        <li>
-                            ${place.name}
-                        </li>
-                    `)
-                }).join('')}
-                </ul>
-            </body>
-            </html>
-        `
-        res.send(HTML)
-
-
-    }
-    catch(err){
-        next(err)
-    }
-})
 const init = async () =>{
     try{
         await client.connect();
