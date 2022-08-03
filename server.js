@@ -5,7 +5,7 @@ const path = require('path')
 
 app.use('/public', express.static(path.join(__dirname,'public')))
 app.use(express.urlencoded({extended: false}))
-
+app.use(require('method-override')('_method'))
 
 const nav = ({users, places}) =>{
     return(`
@@ -76,6 +76,9 @@ app.get('/users', async(req, res, next)=>{
                         <li>
                             ${user.name}
                         </li>
+                        <form method='POST' action='/users/${user.id}?_method=DELETE'>
+                        </form>
+                        <button>x</button>
                     `)
                 }).join('')}
                 </ul>
@@ -102,6 +105,7 @@ app.post('/users', async (req, res, next)=>{
     }
 })
 
+app.delete('/delete/:id', async())
 
 app.get('/places', async(req, res, next)=>{
     try{
